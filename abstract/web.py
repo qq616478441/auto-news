@@ -47,30 +47,35 @@ class MainHandler(tornado.web.RequestHandler):
             print ('-------------------')
             article=urllib.unquote(arg[5])[13:]
 	    a=re.sub("{{(.*?)}}", " ",article)
-		
+	    b=re.findall(r"{{(.*?)}}",article)
+            print "hahahahaha"+str(len(b))
+            for i in range(len(b)):
+                f=requests.get(str(b[i]))
+                file_temp="./news_toutiao_"+str(i)+'.png'
+		print file_temp
+		temp_file=open(file_temp,'w+')
+		temp_file.write(f.content)
+                temp_file.close()		
 		#print a
+            
 	    tr4s = TextRank4Sentence()
 	    tr4s.analyze(text=a, lower=True, source = 'all_filters')
             
-            str=''		
+            str1=''		
 	    print( '摘要：' )
 	    for item in tr4s.get_key_sentences(num=2.5):
     		#print(item.index, item.weight, item.sentence)
     	        print(item.sentence)
-                str=str+item.sentence
-            print str
+                str1=str1+item.sentence
+            print str1
             test.login()
             test.get_code()
             #test.send_text(str[0:100])
                
-            test.send_text_pic(str[0:100],"/home/ren/temp/jiqi/abstract/1.png")
-            #test.send_text_pic("","/home/ren/temp/jiqi/abstract/1.png")
-            #test.send_text_pic("","/home/ren/temp/jiqi/abstract/1.png")
-            #print ('--------------------')
-            #print (urllib.unquote(arg[6])[7:])
-            #print (urllib.unquote(arg[7]))
-            #print (urllib.unquote(arg[8])[9:])
-            #print (arg[9])
+            test.send_text_pic(str1[0:100],"/home/ren/temp/jiqi/abstract/news_toutiao_2.png")
+            for i in range(len(b)):
+                file_temp='./news_toutiao_'+str(i)+'.png'
+		os.remove(file_temp)
         elif self.request.body_arguments.has_key('temp'):
 		article=self.request.body_arguments['temp'][0]
 		
